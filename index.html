@@ -1,252 +1,106 @@
-<!DOCTYPE html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Minimax Lab – Learn Adversarial Search</title>
-<meta name="description" content="Interactive Minimax, Alpha-Beta, Negamax, Expectimax and MCTS lab with playable Tic-Tac-Toe and Connect Four.">
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="A minimal, working Minimax and Alpha-Beta learning lab powered by a C++ WebAssembly engine.">
+<title>Minimax Lab</title>
 <style>
-:root{--bg:#0a1128;--card:#121c3d;--line:#25346a;--tx:#e8ecff;--mut:#9aa7d6;--blue:#38bdf8;--pur:#a78bfa;--ok:#34d399;--bad:#f87171;--warn:#fbbf24}
-*{box-sizing:border-box}html{scroll-behavior:smooth}
-body{margin:0;background:radial-gradient(circle at 20% 0,#1b2a66 0,var(--bg) 45%);color:var(--tx);font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
-a{color:var(--blue)}header{position:sticky;top:0;z-index:5;background:#0a1128ee;backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
-nav{max-width:1100px;margin:auto;display:flex;gap:6px;align-items:center;padding:8px 14px;overflow-x:auto;white-space:nowrap}
-nav b{background:linear-gradient(90deg,var(--blue),var(--pur));-webkit-background-clip:text;color:transparent;margin-right:10px}
-nav a{text-decoration:none;color:var(--mut);padding:4px 10px;border-radius:99px;font-size:14px}nav a:hover{background:var(--card);color:var(--tx)}
-main{max-width:1100px;margin:auto;padding:0 14px 60px}section{padding:36px 0 8px}
-h1{font-size:clamp(2rem,6vw,3.4rem);line-height:1.1;margin:.4em 0}h2{margin:0 0 6px;font-size:1.6rem}h3{margin:.8em 0 .3em}
-.grad{background:linear-gradient(90deg,var(--blue),var(--pur));-webkit-background-clip:text;color:transparent}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:14px 0}
-.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}.grid .card{margin:0}
-p{color:#cfd7ff}.mut{color:var(--mut);font-size:14px}
-button,select,input{font:inherit}
-button{background:#1f2f66;color:var(--tx);border:1px solid var(--line);border-radius:9px;padding:7px 13px;cursor:pointer}
-button:hover{border-color:var(--blue)}button.p{background:linear-gradient(90deg,#2563eb,#7c3aed);border:0}
-select{background:#0d1633;color:var(--tx);border:1px solid var(--line);border-radius:8px;padding:6px}
-.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
-pre{background:#080e22;border:1px solid var(--line);border-radius:10px;padding:12px;overflow:auto;font-size:13px;line-height:1.5;color:#cfe3ff}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
-.stat{background:#0d1633;border:1px solid var(--line);border-radius:10px;padding:8px 10px}.stat b{display:block;font-size:1.25rem;color:var(--blue)}.stat span{font-size:12px;color:var(--mut)}
-.tw{overflow-x:auto;background:#080e22;border:1px solid var(--line);border-radius:10px}
-svg text{fill:var(--tx);font:12px system-ui;text-anchor:middle;pointer-events:none}
-.msg{min-height:3.2em;background:#0d1633;border-left:3px solid var(--pur);padding:8px 12px;border-radius:6px}
-table{width:100%;border-collapse:collapse;font-size:14px}td,th{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left}th{color:var(--mut)}
-.ttt{display:grid;grid-template-columns:repeat(3,84px);gap:6px}.ttt button{height:84px;font-size:2.2rem;font-weight:700;padding:0}
-.c4{display:inline-grid;grid-template-columns:repeat(7,minmax(34px,52px));gap:5px;background:#1d4ed8;padding:8px;border-radius:12px}
-.c4 .cell{aspect-ratio:1;border-radius:50%;background:#0a1128;cursor:pointer;border:3px solid transparent}
-.c4 .r{background:var(--bad)}.c4 .y{background:var(--warn)}.c4 .hint{border-color:var(--ok)}.c4 .w{border-color:#fff}
-.q{margin:12px 0}.q label{display:block;padding:6px 10px;border:1px solid var(--line);border-radius:8px;margin:4px 0;cursor:pointer}
-.good{color:var(--ok)}.bad{color:var(--bad)}
-footer{text-align:center;color:var(--mut);padding:30px 14px;font-size:14px}
-</style></head><body>
-<header><nav><b>Minimax Lab</b><a href="#learn">Learn</a><a href="#tree">Tree Visualizer</a><a href="#arena">Algorithm Arena</a><a href="#ttt">Tic-Tac-Toe</a><a href="#c4">Connect Four</a><a href="#quiz">Quiz</a></nav></header>
-<main>
-<section style="padding-top:50px"><p class="mut">Foundations of AI · Adversarial Search</p>
-<h1>Learn <span class="grad">Minimax</span> by watching it think.</h1>
-<p>Step through game trees, see Alpha-Beta prune branches, compare Minimax with Negamax, Expectimax and Monte Carlo Tree Search, then play against the algorithm in Tic-Tac-Toe and Connect Four. Everything runs in your browser.</p></section>
+:root{color-scheme:dark;--bg:#0b1020;--panel:#121a2c;--line:#26334a;--text:#eef3ff;--muted:#9aa9c0;--blue:#78aaff;--teal:#62dec9;--red:#ff8292;--yellow:#ffd36f;--green:#81dfaa}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.6 system-ui,-apple-system,Segoe UI,sans-serif}a{color:var(--blue)}.wrap{width:min(1000px,calc(100% - 32px));margin:auto}header{border-bottom:1px solid var(--line);padding:20px 0}.top{display:flex;align-items:center;justify-content:space-between;gap:16px}.brand{font-weight:800;font-size:20px;letter-spacing:-.7px}.brand span{color:var(--teal)}nav{display:flex;gap:18px;flex-wrap:wrap}nav a{text-decoration:none;color:var(--muted);font-size:13px}nav a:hover{color:var(--text)}.hero{padding:55px 0 35px}.eyebrow{color:var(--teal);font-size:11px;text-transform:uppercase;letter-spacing:2px;font-weight:700}.hero h1{font-size:clamp(36px,6vw,58px);line-height:1.06;letter-spacing:-2px;margin:12px 0}.hero p{color:var(--muted);max-width:690px;margin:0}.statusline{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:99px;padding:6px 11px;color:var(--muted);font-size:12px;margin-top:18px}.led{width:7px;height:7px;background:var(--green);border-radius:50%}.section{padding:32px 0;border-top:1px solid var(--line)}h2{font-size:25px;letter-spacing:-.7px;margin:0 0 6px}.intro{color:var(--muted);margin:0 0 20px;max-width:760px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.row.between{justify-content:space-between}.btn,select,input{font:inherit}.btn{background:#202d45;color:var(--text);border:1px solid #344561;border-radius:8px;padding:9px 13px;cursor:pointer}.btn.primary{background:var(--blue);color:#07111f;border-color:var(--blue);font-weight:700}.btn:hover{filter:brightness(1.12)}.btn:disabled{opacity:.4;cursor:not-allowed}select,input[type=range]{accent-color:var(--teal)}select{background:#0b1323;color:var(--text);border:1px solid #344561;border-radius:7px;padding:7px}.small{font-size:12px;color:var(--muted)}.ttt-layout,.c4-layout{display:grid;grid-template-columns:minmax(260px,340px) 1fr;gap:18px;align-items:start}.ttt-board{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.ttt-cell{aspect-ratio:1;border:1px solid #344561;border-radius:9px;background:#0c1424;color:var(--text);font-size:clamp(30px,5vw,46px);font-weight:800;cursor:pointer}.ttt-cell:disabled{cursor:default}.ttt-cell.x{color:var(--blue)}.ttt-cell.o{color:var(--teal)}.game-status{font-size:17px;font-weight:700;margin:0 0 8px}.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:14px}.stat{background:#0b1323;border:1px solid var(--line);border-radius:8px;padding:9px}.stat span{display:block;color:var(--muted);font-size:11px}.stat b{font-variant-numeric:tabular-nums}.c4-board{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;background:#17345d;border-radius:12px;padding:9px}.c4-slot{aspect-ratio:1;border-radius:50%;background:#091326;border:1px solid #34517b;cursor:pointer;padding:0}.c4-slot.red{background:var(--red);box-shadow:inset 0 0 0 3px #ffffff30}.c4-slot.yellow{background:var(--yellow);box-shadow:inset 0 0 0 3px #ffffff30}.c4-columns{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:7px}.c4-columns button{padding:6px 0;font-size:12px}.quiz-list{display:grid;gap:12px}.q{padding:15px;border:1px solid var(--line);border-radius:10px;background:#0d1526}.q h3{font-size:15px;margin:0 0 10px}.answers{display:grid;gap:7px}.answer{text-align:left;background:#121d30;border:1px solid #30415c;color:var(--text);padding:9px 11px;border-radius:7px;cursor:pointer}.answer.correct{border-color:var(--green);background:#153326}.answer.wrong{border-color:var(--red);background:#351c2b}.answer:disabled{cursor:default;opacity:1}.feedback{font-size:12px;color:var(--muted);min-height:18px;margin-top:8px}.code{overflow:auto;background:#080e19;border:1px solid var(--line);border-radius:10px;padding:14px;font:12px/1.65 ui-monospace,Consolas,monospace;color:#cbd9ef;white-space:pre}.note{border-left:3px solid var(--teal);padding:10px 13px;background:#0d1c29;color:var(--muted);font-size:13px;margin-top:12px}.footer{padding:25px 0 45px;border-top:1px solid var(--line);color:var(--muted);font-size:12px}#quizScore{font-weight:700;color:var(--teal)}@media(max-width:720px){.top{align-items:flex-start;flex-direction:column}.ttt-layout,.c4-layout{grid-template-columns:1fr}.hero{padding-top:38px}.section{padding:26px 0}}
+</style>
+</head>
+<body>
+<header><div class="wrap top"><div class="brand">MINIMAX<span> LAB</span></div><nav><a href="#concept">Concept</a><a href="#tic">Tic-Tac-Toe</a><a href="#connect">Connect Four</a><a href="#quiz">Quiz</a><a href="#cpp">C++ core</a></nav></div></header>
+<main class="wrap">
+<section class="hero" id="concept"><div class="eyebrow">Adversarial search · Foundations of AI</div><h1>Understand Minimax.<br><span style="color:var(--teal)">Play against it.</span></h1><p>A compact, hands-on learning lab. The games call a real Minimax / Alpha-Beta search engine written in C++ and compiled to WebAssembly—not a pre-recorded animation.</p><div class="statusline"><i class="led"></i><span id="engineStatus">Loading C++ WebAssembly engine…</span></div></section>
+<section class="section"><h2>How Minimax works</h2><p class="intro">Two players take turns. MAX tries to maximise the score; MIN tries to minimise it. The search explores legal future moves and backs up the best achievable value.</p><div class="panel"><div class="row"><b>MAX node</b><span class="small">returns the largest child value</span></div><div class="row" style="margin-top:8px"><b>MIN node</b><span class="small">returns the smallest child value</span></div><div class="note"><b>Alpha-Beta pruning:</b> keeps bounds α and β. When α ≥ β, the remaining siblings cannot change the result, so the search skips them. The selected move remains optimal.</div></div></section>
+<section class="section" id="tic"><h2>01 · Tic-Tac-Toe vs C++ AI</h2><p class="intro">You are X. The AI is O. The C++ engine searches the actual game tree to the end and chooses an optimal move. Use the toggle to compare plain Minimax with Alpha-Beta pruning.</p><div class="ttt-layout"><div class="panel"><div class="ttt-board" id="tttBoard" aria-label="Tic-Tac-Toe board"></div><div class="row" style="margin-top:12px"><button class="btn primary" id="tttNew">New game</button><button class="btn" id="tttUndo">Undo turn</button></div></div><div class="panel"><p class="game-status" id="tttStatus">Loading engine…</p><div class="row"><label class="small"><input type="checkbox" id="tttAB" checked> Alpha-Beta pruning</label></div><div class="stats"><div class="stat"><span>Nodes searched</span><b id="tttNodes">0</b></div><div class="stat"><span>Cutoffs</span><b id="tttCuts">0</b></div><div class="stat"><span>AI move score</span><b id="tttScore">—</b></div><div class="stat"><span>Engine</span><b>C++ / WASM</b></div></div><p class="small" id="tttExplain">The AI searches every legal continuation. Tic-Tac-Toe is small enough for a complete search.</p></div></div></section>
+<section class="section" id="connect"><h2>02 · Connect Four vs C++ AI</h2><p class="intro">You play Red; the AI plays Yellow. The C++ engine uses depth-limited Minimax with a board-pattern evaluation function. Change depth and pruning to experiment.</p><div class="c4-layout"><div class="panel"><div class="row between" style="margin-bottom:10px"><b id="c4Status">Your turn · Red</b><span class="small">6 rows × 7 columns</span></div><div class="c4-columns" id="c4Columns"></div><div class="c4-board" id="c4Board" aria-label="Connect Four board"></div><div class="row" style="margin-top:12px"><button class="btn primary" id="c4New">New game</button><button class="btn" id="c4Undo">Undo turn</button></div></div><div class="panel"><div class="row between"><label for="c4Depth" class="small">AI search depth <b id="c4DepthVal">5</b></label><input id="c4Depth" type="range" min="1" max="7" value="5"></div><label class="small"><input id="c4AB" type="checkbox" checked> Alpha-Beta pruning</label><div class="stats"><div class="stat"><span>Nodes searched</span><b id="c4Nodes">0</b></div><div class="stat"><span>Cutoffs</span><b id="c4Cuts">0</b></div><div class="stat"><span>AI evaluation</span><b id="c4Score">—</b></div><div class="stat"><span>AI selected column</span><b id="c4Move">—</b></div></div><p class="small" id="c4Explain">The AI explores legal drops in center-first order. A heuristic scores open groups of two, three, or four discs.</p></div></div><div class="note">Connect Four uses a finite search depth, so it is not guaranteed to play perfectly. Higher depth usually explores more possibilities and takes longer.</div></section>
+<section class="section" id="quiz"><h2>03 · Knowledge check</h2><p class="intro">Answer all questions. Each response is checked immediately, and your final score is calculated from your first attempt.</p><div class="quiz-list" id="quizList"></div><div class="row between" style="margin-top:14px"><b id="quizScore">Score: 0 / 8</b><button class="btn" id="quizReset">Restart quiz</button></div></section>
+<section class="section" id="cpp"><h2>04 · The actual C++ algorithm</h2><p class="intro">The browser games invoke functions compiled from this C++ source into WebAssembly. The full source is included in the download.</p><div class="code">static int ttt_search(int* b, int player, int depth,
+                      int alpha, int beta, int ai, int use_ab) {
+    ++ttt_node_count;
+    const int w = ttt_winner(b);
+    if (w == ai)  return 10 - depth;
+    if (w == -ai) return depth - 10;
+    if (ttt_full(b)) return 0;
 
-<section id="learn"><h2>1. The idea</h2>
-<div class="grid">
-<div class="card"><h3>MAX &amp; MIN</h3><p>Two players alternate. <b>MAX</b> picks the move with the highest utility, <b>MIN</b> picks the lowest. Minimax assumes both play perfectly.</p></div>
-<div class="card"><h3>Backing up values</h3><p>Leaves get a utility from the game. Each internal node takes the max (MAX node) or min (MIN node) of its children. The root value is the guaranteed outcome.</p></div>
-<div class="card"><h3>Alpha-Beta</h3><p>Keep α (best MAX can already guarantee) and β (best MIN can already guarantee). When <b>α ≥ β</b> the rest of that node's children cannot change the result, so they are pruned. Same answer, fewer nodes.</p></div>
-<div class="card"><h3>Cost</h3><p>Minimax visits O(b<sup>d</sup>) nodes. Alpha-Beta with perfect ordering needs about O(b<sup>d/2</sup>), so it can search twice as deep. Real games use a depth limit plus a heuristic evaluation.</p></div></div>
-<div class="grid" style="margin-top:14px"><div class="card"><h3>Pseudocode</h3><pre>function ALPHABETA(node, α, β):
-  if node is terminal: return utility(node)
-  if node is MAX:
-    v = -∞
-    for child in children(node):
-      v = max(v, ALPHABETA(child, α, β))
-      α = max(α, v)
-      if α ≥ β: break      # β cutoff
-    return v
-  else:
-    v = +∞
-    for child in children(node):
-      v = min(v, ALPHABETA(child, α, β))
-      β = min(β, v)
-      if α ≥ β: break      # α cutoff
-    return v</pre></div>
-<div class="card"><h3>Python</h3><pre>def minimax(node, maximizing):
-    if node.is_terminal():
-        return node.utility
-    vals = (minimax(c, not maximizing)
-            for c in node.children)
-    return max(vals) if maximizing else min(vals)
+    if (player == ai) {                 // MAX
+        int best = -100000;
+        for (int i = 0; i < 9; ++i) if (b[i] == 0) {
+            b[i] = player;
+            const int value = ttt_search(b, -player, depth + 1,
+                                         alpha, beta, ai, use_ab);
+            b[i] = 0;                   // undo move
+            if (value > best) best = value;
+            if (use_ab) {
+                if (best > alpha) alpha = best;
+                if (alpha >= beta) { ++ttt_cutoff_count; break; }
+            }
+        }
+        return best;
+    }
 
-def negamax(node, color):   # color = +1 / -1
-    if node.is_terminal():
-        return color * node.utility
-    return max(-negamax(c, -color)
-               for c in node.children)</pre></div></div></section>
-
-<section id="tree"><h2>2. Tree Visualizer</h2>
-<p>An illustrative random tree (not a real game). ▲ = MAX, ▼ = MIN, squares = leaves. <b>Click a leaf to edit its utility.</b></p>
-<div class="card">
-<div class="row">Depth <select id="tD"><option>2</option><option selected>3</option><option>4</option></select>
-Children <select id="tB"><option>2</option><option selected>3</option></select>
-Child order <select id="tO"><option value="nat">Natural</option><option value="best">Best first</option><option value="worst">Worst first</option></select>
-<label><input type="checkbox" id="tAB" checked> Alpha-Beta</label><button id="tNew" class="p">New tree</button></div>
-<div class="row"><button id="tPrev">◀ Prev</button><button id="tNext">Next ▶</button><button id="tPlay">▶ Autoplay</button><button id="tAll">Run all</button><button id="tReset">Reset</button></div>
-<div class="msg" id="tMsg"></div><div class="tw" style="margin-top:8px"><svg id="tSvg"></svg></div>
-<h3>Minimax vs Alpha-Beta (same tree, same order)</h3><div class="stats" id="tStats"></div></div></section>
-
-<section id="arena"><h2>3. Algorithm Arena</h2>
-<p>Every algorithm solves the tree above. Expectimax treats MIN nodes as chance nodes (uniform average). MCTS uses random rollouts and UCT, so its answer is an estimate and varies per run.</p>
-<div class="card"><div class="row">MCTS iterations <select id="aIt"><option>50</option><option selected>500</option><option>5000</option></select><button id="aRun" class="p">Run all algorithms</button></div>
-<div class="tw"><table><thead><tr><th>Algorithm</th><th>Root value</th><th>Chosen move</th><th>Nodes</th></tr></thead><tbody id="aBody"></tbody></table></div>
-<p class="mut" id="aNote"></p></div></section>
-
-<section id="ttt"><h2>4. Tic-Tac-Toe</h2>
-<p>You are X. The AI (O) uses full-depth Minimax with Alpha-Beta, so it never loses.</p>
-<div class="card"><div class="row"><button id="tNewG" class="p">New game</button><label><input type="checkbox" id="tAI"> AI moves first</label></div>
-<div class="ttt" id="tBoard"></div><p class="msg" id="tgMsg" style="margin-top:10px"></p></div></section>
-
-<section id="c4"><h2>5. Connect Four</h2>
-<p>You are Red, the AI is Yellow. The AI uses depth-limited negamax with a heuristic evaluation (centre control and open 2s/3s), iterative deepening, centre-first ordering and a transposition table. It does <b>not</b> solve the whole game; deeper means stronger and slower.</p>
-<div class="card"><div class="row">Depth <input type="range" id="cD" min="1" max="7" value="5"><b id="cDv">5</b>
-<label><input type="checkbox" id="cAB" checked> Alpha-Beta + table</label>
-<button id="cHint">Hint</button><button id="cUndo">Undo</button><button id="cNew" class="p">New game</button></div>
-<div class="c4" id="cBoard"></div><p class="msg" id="cMsg" style="margin-top:10px"></p>
-<div class="stats" id="cStats"></div>
-<p class="mut">Table: stores a value for a position, its search depth and whether it is exact or a lower/upper bound, so Alpha-Beta can reuse it safely. Turn Alpha-Beta off to see plain Minimax visit many more nodes.</p></div></section>
-
-<section id="quiz"><h2>6. Quiz</h2><div class="card" id="qBox"></div></section>
-</main>
-<footer>Minimax Lab · static site, no tracking · runs entirely in your browser</footer>
+    int best = 100000;                  // MIN
+    for (int i = 0; i < 9; ++i) if (b[i] == 0) {
+        b[i] = player;
+        const int value = ttt_search(b, -player, depth + 1,
+                                     alpha, beta, ai, use_ab);
+        b[i] = 0;                       // undo move
+        if (value < best) best = value;
+        if (use_ab) {
+            if (best < beta) beta = best;
+            if (alpha >= beta) { ++ttt_cutoff_count; break; }
+        }
+    }
+    return best;
+}</div><div class="row" style="margin-top:12px"><a class="btn primary" href="minimax.cpp" download>Download complete C++ source</a><a class="btn" href="minimax_core.wasm" download>Download WebAssembly engine</a></div><p class="small">The code excerpt illustrates the Tic-Tac-Toe search. The downloadable C++ file also contains the Connect Four evaluator and search routine.</p></section>
+</main><footer><div class="wrap">Minimax Lab · Static GitHub Pages site · C++ search engine compiled to WebAssembly</div></footer>
 <script>
-"use strict";
+'use strict';
+let wasm=null;
 const $=id=>document.getElementById(id);
-const F=x=>x===Infinity?"+∞":x===-Infinity?"−∞":x;
-
-/* ---------- Tree Visualizer ---------- */
-let root,nodes,steps=[],si=0,timer=null;
-function build(d,br,max){const n={max,kids:[]};if(!d)n.v=Math.floor(Math.random()*19)-9;else for(let i=0;i<br;i++)n.kids.push(build(d-1,br,!max));return n}
-function layout(){nodes=[];let leaf=0;(function go(n,d){n.d=d;n.id=nodes.length;nodes.push(n);n.kids.forEach(c=>go(c,d+1));n.x=n.kids.length?n.kids.reduce((s,c)=>s+c.x,0)/n.kids.length:leaf++})(root,0)}
-const exact=n=>n.kids.length?(n.max?Math.max:Math.min)(...n.kids.map(exact)):n.v;
-function ordered(n,m){const k=n.kids.slice();if(m!=="nat")k.sort((a,b)=>(exact(a)-exact(b))*(n.max===(m==="best")?-1:1));return k}
-function run(ab,mode){const vals={},pr=new Set(),S=[];let ev=0,vis=0;
- const snap=(cur,a,b,msg)=>S.push({cur,a,b,msg,vals:{...vals},pr:new Set(pr)});
- const mark=n=>{pr.add(n.id);n.kids.forEach(mark)};
- function mm(n,a,b){vis++;snap(n.id,a,b,`Visit node ${n.id} (${n.kids.length?(n.max?"MAX":"MIN"):"leaf"}).`);
-  if(!n.kids.length){ev++;vals[n.id]=n.v;snap(n.id,a,b,`Leaf ${n.id}: utility = ${n.v}.`);return n.v}
-  let v=n.max?-Infinity:Infinity;const k=ordered(n,mode);
-  for(let i=0;i<k.length;i++){const r=mm(k[i],a,b);
-   if(n.max){v=Math.max(v,r);if(ab)a=Math.max(a,v)}else{v=Math.min(v,r);if(ab)b=Math.min(b,v)}
-   vals[n.id]=v;snap(n.id,a,b,`${n.max?"MAX":"MIN"} node ${n.id} now has value ${v}.`);
-   if(ab&&a>=b){if(i<k.length-1){k.slice(i+1).forEach(mark);snap(n.id,a,b,`Cutoff at node ${n.id}: α=${F(a)} ≥ β=${F(b)}. Remaining children are pruned.`)}break}}
-  return v}
- const value=mm(root,-Infinity,Infinity);return{S,ev,vis,value,pruned:pr.size}}
-function recompute(){stop();const ab=$("tAB").checked,m=$("tO").value;const r=run(ab,m);steps=r.S;si=0;draw();stats(m)}
-function stats(m){const a=run(false,m),b=run(true,m);
- const st=(l,v)=>`<div class="stat"><b>${v}</b><span>${l}</span></div>`;
- $("tStats").innerHTML=st("Minimax leaf evals",a.ev)+st("Minimax nodes",a.vis)+st("Alpha-Beta leaf evals",b.ev)+st("Alpha-Beta nodes",b.vis)+st("Nodes pruned",b.pruned)+st("Root (Minimax / AB)",`${a.value} / ${b.value}`)+st("Same answer?",a.value===b.value?'<span class="good">✔ yes</span>':'<span class="bad">✘ BUG</span>')}
-function pathSet(){const s=new Set();let n=root;s.add(n.id);while(n.kids.length){n=n.kids.find(c=>exact(c)===exact(n));s.add(n.id)}return s}
-function draw(){const s=steps[si],last=si===steps.length-1,path=last?pathSet():new Set();
- const leaves=nodes.filter(n=>!n.kids.length).length,D=Math.max(...nodes.map(n=>n.d)),X=64,Y=82,w=leaves*X+20,h=(D+1)*Y+10;
- const px=n=>n.x*X+X/2+10,py=n=>n.d*Y+36;let o="";
- nodes.forEach(n=>n.kids.forEach(c=>{o+=`<line x1="${px(n)}" y1="${py(n)}" x2="${px(c)}" y2="${py(c)}" stroke="${s.pr.has(c.id)?"#f87171":path.has(c.id)&&path.has(n.id)?"#34d399":"#3b4b8a"}" stroke-width="${path.has(c.id)&&path.has(n.id)?3:1.5}" ${s.pr.has(c.id)?'stroke-dasharray="4"':""}/>`}));
- nodes.forEach(n=>{const x=px(n),y=py(n),pr=s.pr.has(n.id),cur=s.cur===n.id;
-  const fill=pr?"#2a1020":cur?"#7c3aed":path.has(n.id)?"#065f46":s.vals[n.id]!==undefined?"#1e3a8a":"#16224d",st=cur?"#fff":pr?"#f87171":"#4f63b8";
-  const sh=!n.kids.length?`<rect x="${x-17}" y="${y-17}" width="34" height="34" rx="6" fill="${fill}" stroke="${st}" stroke-width="2" style="cursor:pointer" data-id="${n.id}"/>`:
-   n.max?`<polygon points="${x},${y-22} ${x+22},${y+16} ${x-22},${y+16}" fill="${fill}" stroke="${st}" stroke-width="2"/>`:`<polygon points="${x},${y+22} ${x+22},${y-16} ${x-22},${y-16}" fill="${fill}" stroke="${st}" stroke-width="2"/>`;
-  const v=s.vals[n.id];o+=sh+`<text x="${x}" y="${y+4}">${pr?"✂":v!==undefined?v:n.kids.length?"":"?"}</text>`;
-  if(!n.kids.length&&!pr&&v===undefined)o+=`<text x="${x}" y="${y+4}" fill="#9aa7d6">${n.v}</text>`});
- const svg=$("tSvg");svg.setAttribute("viewBox",`0 0 ${w} ${h}`);svg.style.width=Math.max(w,300)+"px";svg.style.height=h+"px";svg.innerHTML=o;
- svg.querySelectorAll("rect[data-id]").forEach(r=>r.onclick=()=>{const n=nodes[r.dataset.id],v=parseInt(prompt("New utility value (−99 to 99):",n.v),10);if(!isNaN(v)&&Math.abs(v)<100){n.v=v;recompute()}});
- $("tMsg").innerHTML=`<b>Step ${si+1}/${steps.length}</b> · α=${F(s.a)} β=${F(s.b)}<br>${s.msg}${last?` <b class="good">Root value = ${s.vals[0]}. Green path = optimal line of play.</b>`:""}`}
-function stop(){clearInterval(timer);timer=null;$("tPlay").textContent="▶ Autoplay"}
-function newTree(){root=build(+$("tD").value,+$("tB").value,true);layout();recompute()}
-$("tNew").onclick=newTree;$("tD").onchange=$("tB").onchange=newTree;$("tO").onchange=$("tAB").onchange=recompute;
-$("tNext").onclick=()=>{stop();if(si<steps.length-1){si++;draw()}};$("tPrev").onclick=()=>{stop();if(si>0){si--;draw()}};
-$("tAll").onclick=()=>{stop();si=steps.length-1;draw()};$("tReset").onclick=()=>{stop();si=0;draw()};
-$("tPlay").onclick=()=>{if(timer)return stop();if(si>=steps.length-1)si=0;$("tPlay").textContent="⏸ Pause";timer=setInterval(()=>{if(si<steps.length-1){si++;draw()}else stop()},550)};
-
-/* ---------- Algorithm Arena ---------- */
-function algos(){let c;const out=[];const kids=root.kids;
- c=0;const mm=n=>{c++;return n.kids.length?(n.max?Math.max:Math.min)(...n.kids.map(mm)):n.v};
- const v1=mm(root);let best=kids.findIndex(k=>mm(k)===v1);out.push(["Minimax",v1,best,null]);
- const r=run(true,"nat");out.push(["Alpha-Beta",r.value,kids.findIndex(k=>exact(k)===r.value),r.vis]);
- c=0;const ng=(n,col)=>{c++;return n.kids.length?Math.max(...n.kids.map(k=>-ng(k,-col))):col*n.v};
- const vals=kids.map(k=>-ng(k,-1));const vn=Math.max(...vals);out.push(["Negamax",vn,vals.indexOf(vn),c]);
- c=0;const ex=n=>{c++;return !n.kids.length?n.v:n.max?Math.max(...n.kids.map(ex)):n.kids.reduce((s,k)=>s+ex(k),0)/n.kids.length};
- const ev=kids.map(ex);const ve=Math.max(...ev);out.push(["Expectimax (MIN = chance)",+ve.toFixed(2),ev.indexOf(ve),c]);
- out[0][3]=(()=>{c=0;mm(root);return c})();
- return out}
-function mcts(it){nodes.forEach(n=>{n.N=0;n.W=0});
- for(let i=0;i<it;i++){let n=root;const path=[n];
-  while(n.kids.length){const un=n.kids.filter(k=>!k.N);let k;
-   if(un.length)k=un[Math.floor(Math.random()*un.length)];
-   else{let bs=-1e9;for(const x of n.kids){const q=x.W/x.N,s=(n.max?q:1-q)+1.4*Math.sqrt(Math.log(n.N)/x.N);if(s>bs){bs=s;k=x}}}
-   path.push(k);n=k;if(un.length)break}
-  while(n.kids.length)n=n.kids[Math.floor(Math.random()*n.kids.length)];
-  const r=(n.v+9)/18;path.forEach(p=>{p.N++;p.W+=r})}
- const k=root.kids;let b=0;k.forEach((x,i)=>{if(x.N>k[b].N)b=i});return[b,+(k[b].W/Math.max(k[b].N,1)*18-9).toFixed(2)]}
-$("aRun").onclick=()=>{const rows=algos(),it=+$("aIt").value,[mb,mv]=mcts(it);
- rows.push([`MCTS (${it} rollouts)`,mv+" (est.)",mb,it]);
- const opt=rows[0][2];
- $("aBody").innerHTML=rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td class="${r[2]===opt?"good":"bad"}">Move ${r[2]+1}</td><td>${r[3]}</td></tr>`).join("");
- $("aNote").textContent="Green = same move as Minimax. Expectimax and MCTS can legitimately differ because they model the opponent differently (average / sampled) instead of assuming perfect play. Alpha-Beta node count uses natural order."};
-
-/* ---------- Tic-Tac-Toe ---------- */
-let tb,tOver;const LN=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-const tw=b=>{for(const[x,y,z]of LN)if(b[x]&&b[x]===b[y]&&b[x]===b[z])return b[x];return 0};
-function tm(b,p,a,be,S,d){S.n++;const w=tw(b);if(w)return w===2?10-d:d-10;if(b.every(x=>x))return 0;
- let best=p===2?-99:99;for(let i=0;i<9;i++)if(!b[i]){b[i]=p;const v=tm(b,3-p,a,be,S,d+1);b[i]=0;
-  if(p===2){best=Math.max(best,v);a=Math.max(a,best)}else{best=Math.min(best,v);be=Math.min(be,best)}if(a>=be)break}return best}
-function tRender(){$("tBoard").innerHTML="";tb.forEach((v,i)=>{const b=document.createElement("button");b.textContent=v===1?"X":v===2?"O":"";b.style.color=v===1?"#38bdf8":"#a78bfa";b.onclick=()=>tClick(i);$("tBoard").appendChild(b)})}
-function tEnd(){const w=tw(tb);if(w||tb.every(x=>x)){tOver=true;$("tgMsg").textContent=w===1?"You win! (This should be impossible. Report a bug!)":w===2?"AI (O) wins.":"Draw. That is the best you can do against Minimax.";return true}return false}
-function tAIMove(){const S={n:0};let bi=-1,bv=-99;for(let i=0;i<9;i++)if(!tb[i]){tb[i]=2;const v=tm(tb,1,-99,99,S,1);tb[i]=0;if(v>bv){bv=v;bi=i}}tb[bi]=2;tRender();
- if(!tEnd())$("tgMsg").textContent=`AI searched ${S.n} positions with Alpha-Beta (${bv>0?"it sees a forced win":bv<0?"it expects a loss":"it expects a draw"}). Your move.`}
-function tClick(i){if(tOver||tb[i])return;tb[i]=1;tRender();if(!tEnd())tAIMove()}
-function tNewGame(){tb=Array(9).fill(0);tOver=false;$("tgMsg").textContent="Your move (X).";tRender();if($("tAI").checked)tAIMove()}
-$("tNewG").onclick=tNewGame;
-
-/* ---------- Connect Four ---------- */
-const W=7,H=6,ORD=[3,2,4,1,5,0,6];let B,hist,cOver,WIN=[];
-const rowOf=c=>{for(let r=H-1;r>=0;r--)if(!B[r*W+c])return r;return -1};
-function wonAt(r,c,p){for(const[dr,dc]of[[0,1],[1,0],[1,1],[1,-1]]){let k=1;const cells=[[r,c]];for(const s of[1,-1]){let R=r+dr*s,C=c+dc*s;while(R>=0&&R<H&&C>=0&&C<W&&B[R*W+C]===p){k++;cells.push([R,C]);R+=dr*s;C+=dc*s}}if(k>=4){WIN=cells;return true}}return false}
-const WINS=[];for(let r=0;r<H;r++)for(let c=0;c<W;c++)for(const[dr,dc]of[[0,1],[1,0],[1,1],[1,-1]]){const R=r+3*dr,C=c+3*dc;if(R>=0&&R<H&&C>=0&&C<W)WINS.push([0,1,2,3].map(k=>(r+dr*k)*W+c+dc*k))}
-function evalB(p){let s=0;for(let r=0;r<H;r++)if(B[r*W+3]===p)s+=3;else if(B[r*W+3]===3-p)s-=3;
- for(const w of WINS){let m=0,o=0;for(const i of w){if(B[i]===p)m++;else if(B[i])o++}
-  if(m&&o)continue;if(m===3)s+=5;else if(m===2)s+=2;if(o===3)s-=4;else if(o===2)s-=1}return s}
-function nega(S,p,d,a,be,last){S.n++;
- if(last&&wonAt(last[0],last[1],3-p))return -1e5-d;
- const mv=ORD.filter(c=>!B[c]);if(!mv.length)return 0;if(!d)return evalB(p);
- const a0=a;let key;
- if(S.ab){key=B.join("");const e=S.TT.get(key);if(e&&e.d>=d){if(e.f===0){S.hit++;return e.v}if(e.f===1)a=Math.max(a,e.v);else be=Math.min(be,e.v);if(a>=be){S.hit++;return e.v}}}
- let best=-1e9;
- for(const c of mv){const r=rowOf(c);B[r*W+c]=p;const v=-nega(S,3-p,d-1,-be,-a,[r,c]);B[r*W+c]=0;
-  if(v>best)best=v;if(v>a)a=v;if(S.ab&&a>=be){S.cut++;break}}
- if(S.ab)S.TT.set(key,{d,v:best,f:best<=a0?2:best>=be?1:0});
- return best}
-function search(p,D,ab){const S={n:0,cut:0,hit:0,ab,TT:new Map(),depth:0};let best=null,score=0,pv=null;
- for(let d=1;d<=D;d++){let a=-1e9,bs=-1e9,bm=null;const ms=ORD.filter(c=>rowOf(c)>=0);
-  if(pv!==null){ms.splice(ms.indexOf(pv),1);ms.unshift(pv)}
-  for(const c of ms){const r=rowOf(c);B[r*W+c]=p;const v=-nega(S,3-p,d-1,ab?-1e9:-1e9,ab?-a:1e9,[r,c]);B[r*W+c]=0;if(v>bs){bs=v;bm=c}if(ab&&v>a)a=v}
-  pv=bm;best=bm;score=bs;S.depth=d;if(Math.abs(bs)>9e4)break}
- return{col:best,score,S}}
-function cRender(hint){const g=$("cBoard");g.innerHTML="";
- for(let r=0;r<H;r++)for(let c=0;c<W;c++){const d=document.createElement("div"),v=B[r*W+c];d.className="cell"+(v===1?" r":v===2?" y":"")+(WIN.some(x=>x[0]===r&&x[1]===c)?" w":"")+(hint===c&&r===rowOf(c)?" hint":"");d.onclick=()=>cClick(c);d.setAttribute("aria-label",`column ${c+1}`);g.appendChild(d)}}
-function cStats(r,t){const st=(l,v)=>`<div class="stat"><b>${v}</b><span>${l}</span></div>`;
- $("cStats").innerHTML=st("Nodes visited",r.S.n)+st("Cutoffs",r.S.cut)+st("Table hits",r.S.hit)+st("Depth completed",r.S.depth)+st("Evaluation (AI view)",r.score>9e4?"win":r.score<-9e4?"loss":r.score)+st("Suggested column",r.col+1)+st("Time",t+" ms")}
-function cDraw(){return B.every(x=>x)}
-function cMove(c,p){const r=rowOf(c);B[r*W+c]=p;hist.push([r,c]);if(wonAt(r,c,p)){cOver=true;cRender();$("cMsg").textContent=p===1?"You win! 🎉":"AI wins.";return true}
- if(cDraw()){cOver=true;$("cMsg").textContent="Draw.";cRender();return true}return false}
-function cClick(c){if(cOver||rowOf(c)<0||busy)return;WIN=[];if(cMove(c,1))return;cRender();busy=true;$("cMsg").textContent="AI thinking…";
- setTimeout(()=>{const t=performance.now(),r=search(2,+$("cD").value,$("cAB").checked);cStats(r,Math.round(performance.now()-t));busy=false;
-  if(!cMove(r.col,2)){cRender();$("cMsg").textContent=`AI played column ${r.col+1}. Your turn.`}},30)}
-let busy=false;
-$("cHint").onclick=()=>{if(cOver||busy)return;const r=search(1,+$("cD").value,$("cAB").checked);cStats(r,0);cRender(r.col);$("cMsg").textContent=`Hint: column ${r.col+1} (green ring).`};
-$("cUndo").onclick=()=>{if(busy||hist.length<1)return;const n=hist.length%2===0?2:1;for(let i=0;i<n&&hist.length;i++){const[r,c]=hist.pop();B[r*W+c]=0}cOver=false;WIN=[];cRender();$("cMsg").textContent="Move undone. Your turn."};
-function cNew(){B=Array(W*H).fill(0);hist=[];cOver=false;WIN=[];busy=false;cRender();$("cStats").innerHTML="";$("cMsg").textContent="Click a column to drop a red disc."}
-$("cNew").onclick=cNew;$("cD").oninput=()=>$("cDv").textContent=$("cD").value;
-
-/* ---------- Quiz ---------- */
-const QS=[["In Minimax, what does a MIN node do?",["Picks the child with the lowest utility","Picks the highest utility","Averages its children","Picks randomly"],0],
-["Alpha-Beta prunes when…",["α ≥ β","α < β","depth = 0","a leaf is reached"],0],
-["Compared with plain Minimax, Alpha-Beta returns…",["The same root value with fewer nodes","A better root value","A worse but faster value","Only an estimate"],0],
-["Alpha-Beta works best when…",["The best moves are searched first","The tree is very small","Moves are searched in random order","MIN nodes are removed"],0],
-["Expectimax differs from Minimax because chance nodes…",["Take a probability-weighted average","Take the minimum","Are ignored","Take the maximum"],0],
-["Why do Connect Four AIs need a depth limit and heuristic?",["The full tree is far too large to search","Connect Four has no terminal states","Alpha-Beta cannot be used","Heuristics are more accurate than the rules"],0]];
-function quiz(){let a={};$("qBox").innerHTML=QS.map((q,i)=>{const idx=[0,1,2,3].sort(()=>Math.random()-.5);return`<div class="q"><b>${i+1}. ${q[0]}</b>${idx.map(j=>`<label><input type="radio" name="q${i}" value="${j}"> ${q[1][j]}</label>`).join("")}</div>`}).join("")+`<button class="p" id="qGo">Check answers</button> <span id="qRes"></span>`;
- $("qGo").onclick=()=>{let s=0;QS.forEach((q,i)=>{const x=document.querySelector(`input[name=q${i}]:checked`);if(x&&+x.value===q[2])s++});$("qRes").innerHTML=`<b class="${s>4?"good":"bad"}">Score: ${s}/${QS.length}</b> ${s===QS.length?"Perfect!":"Review the sections above and retry."}`}}
-newTree();tNewGame();cNew();quiz();$("aRun").click();
-</script></body></html>
+const engineReady=(async()=>{try{const r=await fetch('minimax_core.wasm');if(!r.ok)throw new Error('Could not load minimax_core.wasm');const bytes=await r.arrayBuffer();const result=await WebAssembly.instantiate(bytes,{});wasm=result.instance.exports;$('engineStatus').textContent='C++ WebAssembly engine ready';return true;}catch(e){$('engineStatus').textContent='Engine failed to load: '+e.message;$('tttStatus').textContent='Could not load the C++ engine. Serve this folder through GitHub Pages or a local web server.';return false;}})();
+function needEngine(){return !!wasm;}
+// Tic-Tac-Toe — all search decisions are made by the C++ WebAssembly module.
+let ttt=[],tttHistory=[],tttOver=false,tttThinking=false;
+function tttRender(){const root=$('tttBoard');root.innerHTML='';ttt.forEach((v,i)=>{const b=document.createElement('button');b.className='ttt-cell '+(v===-1?'x':v===1?'o':'');b.textContent=v===-1?'X':v===1?'O':'';b.disabled=v!==0||tttOver||tttThinking||!needEngine();b.setAttribute('aria-label',`Cell ${i+1} ${b.textContent||'empty'}`);b.addEventListener('click',()=>tttHuman(i));root.appendChild(b);});}
+function tttSync(){wasm.ttt_clear();ttt.forEach((v,i)=>wasm.ttt_set_cell(i,v));}
+function tttEnd(){const w=wasm.ttt_winner_now();if(w){tttOver=true;$('tttStatus').textContent=w===-1?'You win!':'C++ AI wins.';return true;}if(wasm.ttt_is_full()){tttOver=true;$('tttStatus').textContent='Draw game.';return true;}return false;}
+function tttMetrics(){ $('tttNodes').textContent=wasm.ttt_nodes();$('tttCuts').textContent=wasm.ttt_cutoffs();$('tttScore').textContent=wasm.ttt_score(); }
+function tttAi(){tttThinking=true;tttSync();const move=wasm.ttt_best_move(1,$('tttAB').checked?1:0);tttMetrics();if(move>=0)ttt[move]=1;tttThinking=false;tttSync();if(!tttEnd())$('tttStatus').textContent='Your turn · X';tttRender();}
+function tttHuman(i){if(!needEngine()||tttOver||tttThinking||ttt[i]!==0)return;tttHistory.push(ttt.slice());ttt[i]=-1;tttSync();if(tttEnd()){tttRender();return;}$('tttStatus').textContent='AI is searching…';tttThinking=true;tttRender();setTimeout(tttAi,30);}
+function tttNew(){ttt=Array(9).fill(0);tttHistory=[];tttOver=false;tttThinking=false;if(needEngine()){tttSync();$('tttStatus').textContent='Your turn · X';$('tttNodes').textContent='0';$('tttCuts').textContent='0';$('tttScore').textContent='—';}tttRender();}
+function tttUndo(){if(!tttHistory.length||tttThinking)return;ttt=tttHistory.pop();tttOver=false;tttSync();$('tttStatus').textContent='Your turn · X';tttRender();}
+$('tttNew').addEventListener('click',tttNew);$('tttUndo').addEventListener('click',tttUndo);
+// Connect Four — C++ depth-limited Minimax / Alpha-Beta selects the AI column.
+let c4=Array(42).fill(0),c4History=[],c4Over=false,c4Busy=false;
+function c4Sync(){wasm.c4_clear();for(let r=0;r<6;r++)for(let c=0;c<7;c++)wasm.c4_set_cell(r,c,c4[r*7+c]);}
+function c4Drop(col,p){for(let r=5;r>=0;r--)if(c4[r*7+col]===0){c4[r*7+col]=p;return true;}return false;}
+function c4Win(p){for(let r=0;r<6;r++)for(let c=0;c<7;c++){const i=r*7+c;if(c<=3&&[1,2,3].every(k=>c4[i+k]===p))return true;if(r<=2&&[1,2,3].every(k=>c4[i+k*7]===p))return true;if(r<=2&&c<=3&&[1,2,3].every(k=>c4[i+k*8]===p))return true;if(r<=2&&c>=3&&[1,2,3].every(k=>c4[i+k*6]===p))return true;}return false;}
+function c4Full(){return c4.every(v=>v!==0);}
+function c4Render(){const cols=$('c4Columns');cols.innerHTML='';for(let c=0;c<7;c++){const b=document.createElement('button');b.className='btn';b.textContent='↓ '+(c+1);b.disabled=c4Over||c4Busy||c4[ c ]!==0||!needEngine();b.addEventListener('click',()=>c4Human(c));cols.appendChild(b);}const board=$('c4Board');board.innerHTML='';for(let r=0;r<6;r++)for(let c=0;c<7;c++){const b=document.createElement('button');const v=c4[r*7+c];b.className='c4-slot '+(v===-1?'red':v===1?'yellow':'');b.disabled=true;b.setAttribute('aria-label',`Row ${r+1}, column ${c+1}, ${v===-1?'red':v===1?'yellow':'empty'}`);board.appendChild(b);}}
+function c4Finish(){if(c4Win(-1)){c4Over=true;$('c4Status').textContent='You win · Red!';return true;}if(c4Win(1)){c4Over=true;$('c4Status').textContent='C++ AI wins · Yellow.';return true;}if(c4Full()){c4Over=true;$('c4Status').textContent='Draw game.';return true;}return false;}
+function c4Metrics(move){$('c4Nodes').textContent=wasm.c4_nodes();$('c4Cuts').textContent=wasm.c4_cutoffs();$('c4Score').textContent=wasm.c4_score();$('c4Move').textContent=move<0?'—':String(move+1);}
+function c4Ai(){c4Busy=true;c4Sync();const depth=Number($('c4Depth').value),ab=$('c4AB').checked?1:0;const move=wasm.c4_best_move(1,depth,ab);c4Metrics(move);if(move>=0)c4Drop(move,1);c4Busy=false;c4Sync();if(!c4Finish())$('c4Status').textContent='Your turn · Red';c4Render();}
+function c4Human(col){if(c4Over||c4Busy||!needEngine()||c4[col]!==0)return;c4History.push(c4.slice());if(!c4Drop(col,-1))return;c4Sync();if(c4Finish()){c4Render();return;}$('c4Status').textContent='AI is searching…';c4Busy=true;c4Render();setTimeout(c4Ai,30);}
+function c4New(){c4=Array(42).fill(0);c4History=[];c4Over=false;c4Busy=false;if(needEngine()){c4Sync();$('c4Status').textContent='Your turn · Red';$('c4Nodes').textContent='0';$('c4Cuts').textContent='0';$('c4Score').textContent='—';$('c4Move').textContent='—';}c4Render();}
+function c4Undo(){if(!c4History.length||c4Busy)return;c4=c4History.pop();c4Over=false;c4Sync();$('c4Status').textContent='Your turn · Red';c4Render();}
+$('c4New').addEventListener('click',c4New);$('c4Undo').addEventListener('click',c4Undo);$('c4Depth').addEventListener('input',()=>{$('c4DepthVal').textContent=$('c4Depth').value;});
+// Quiz: one answer per question, locked after response, deterministic scoring and restart.
+const questions=[
+{q:'Which player does MAX represent in the standard Minimax formulation?',a:['The player trying to maximise utility','The player trying to minimise utility','A random player','The evaluator only'],k:0,e:'MAX selects the child with the greatest backed-up utility.'},
+{q:'What value does a MIN node return?',a:['The largest child value','The smallest child value','The average child value','Always zero'],k:1,e:'MIN assumes the opponent chooses the outcome least favourable to MAX.'},
+{q:'What is the Alpha-Beta cutoff condition?',a:['α = 0','β = 0','α ≥ β','α + β = 1'],k:2,e:'When alpha is at least beta, further siblings cannot affect the decision.'},
+{q:'Does Alpha-Beta pruning change the optimal Minimax value?',a:['Yes, it approximates it','No, it preserves the value','Only at odd depths','Only for Tic-Tac-Toe'],k:1,e:'It skips irrelevant branches but returns the same value as Minimax.'},
+{q:'What does a depth-limited game search need at its frontier?',a:['A heuristic evaluation function','A compiler error','A random move only','A sorted list of players'],k:0,e:'At the depth limit, a heuristic estimates the position value.'},
+{q:'What is the usual worst-case time complexity of Minimax with branching factor b and depth d?',a:['O(bd)','O(d²)','O(b^d)','O(log d)'],k:2,e:'A full search can examine a tree whose number of nodes grows exponentially with depth.'},
+{q:'Why can move ordering improve Alpha-Beta pruning?',a:['It changes the game rules','It helps find strong bounds earlier','It reduces the branching factor to one','It removes terminal states'],k:1,e:'Good moves found early tighten alpha or beta and can trigger more cutoffs.'},
+{q:'In this Connect Four lab, why is the AI not guaranteed to play perfectly?',a:['It does not check legal moves','It searches only to a selected depth and uses a heuristic','It always chooses the leftmost column','Alpha-Beta changes the score'],k:1,e:'Depth-limited search may not see the eventual terminal outcome; heuristic scores approximate future value.'}
+];
+let quizAnswers={},quizScore=0;
+function quizRender(){const root=$('quizList');root.innerHTML='';questions.forEach((q,i)=>{const box=document.createElement('article');box.className='q';const h=document.createElement('h3');h.textContent=`${i+1}. ${q.q}`;box.appendChild(h);const ans=document.createElement('div');ans.className='answers';q.a.forEach((label,j)=>{const b=document.createElement('button');b.className='answer';b.textContent=String.fromCharCode(65+j)+'. '+label;b.disabled=quizAnswers[i]!==undefined;if(quizAnswers[i]!==undefined&&j===q.k)b.classList.add('correct');if(quizAnswers[i]===j&&j!==q.k)b.classList.add('wrong');b.addEventListener('click',()=>{if(quizAnswers[i]!==undefined)return;quizAnswers[i]=j;if(j===q.k)quizScore++;quizRender();});ans.appendChild(b);});box.appendChild(ans);const f=document.createElement('div');f.className='feedback';f.textContent=quizAnswers[i]===undefined?'Choose one answer.':(quizAnswers[i]===q.k?'Correct. ':'Not quite. ')+q.e;box.appendChild(f);root.appendChild(box);});$('quizScore').textContent=`Score: ${quizScore} / ${questions.length} · ${Object.keys(quizAnswers).length} answered`;}
+$('quizReset').addEventListener('click',()=>{quizAnswers={};quizScore=0;quizRender();});
+(async()=>{const ok=await engineReady;if(ok){tttNew();c4New();}else{tttRender();c4Render();}quizRender();})();
+</script>
+</body></html>
