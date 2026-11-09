@@ -1,24 +1,22 @@
 # Minimax Lab
 
-A responsive, static educational website explaining the Minimax algorithm.
+A public, static website for learning the Minimax algorithm and alpha-beta pruning.
 
 ## Features
-- Beginner-friendly explanation of MAX and MIN
-- Step-by-step interactive game-tree visualizer
-- Alpha-beta pruning explanation toggle
+- Minimax concepts and a step-by-step example tree
+- Advanced editable game-tree lab (depth 2–4)
+- Editable terminal utility scores and animated value propagation
+- Alpha-beta pruning visualization, cutoff explanations, and node comparison
 - Minimax pseudocode and complexity notes
 - Playable Tic-Tac-Toe against a Minimax AI
-- Four-question knowledge check
-
-## Run locally
-Open `index.html` in a modern browser. No build tools or dependencies are required.
+- Knowledge-check quiz
 
 ## Publish with GitHub Pages
-1. Create a new public repository on GitHub, for example `minimax-lab`.
-2. Upload `index.html` and this `README.md` to the repository's root.
+1. Create a **public** repository named `minimax-lab` on GitHub.
+2. Upload `index.html` and `README.md` to the repository root.
 3. Open **Settings → Pages**.
 4. Under **Build and deployment**, choose **Deploy from a branch**.
-5. Select the `main` branch and `/ (root)`, then click **Save**.
-6. Wait for GitHub Pages to publish. The public site URL will appear in the Pages settings.
+5. Select branch `main` and folder `/ (root)`, then save.
+6. After deployment, visit `https://YOUR-USERNAME.github.io/minimax-lab/`.
 
-The site is static and does not require a server, API key, or database.
+No build step or server is required. The page is plain HTML, CSS and JavaScript.
